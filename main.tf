@@ -1,6 +1,5 @@
 provider "aws" {
   region = "ca-central-1"
-  profile = "mogo-soa-nonprod" 
 }
 
 #creating AWS CloudFront distribution :
