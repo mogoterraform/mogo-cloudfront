@@ -3,29 +3,24 @@ provider "aws" {
 }
 
 #creating AWS CloudFront distribution :
-resource "aws_cloudfront_distribution" "moka_stg_dist" {
+resource "aws_cloudfront_distribution" "main_dist" {
   enabled             = true
-  aliases             = ["cfstg.moka.ai"]
-  origin {
-    domain_name = "staging.moka.ai"
-    origin_id   = "staging"
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
+  aliases             = [var.domain_alias]
+
+  dynamic "origin" {
+    for_each = var.origins
+    content {
+      domain_name = origin.value
+      origin_id = var.origin_ids[origin.key]
+      custom_origin_config {
+        http_port              = 80
+        https_port             = 443
+        origin_protocol_policy = "https-only"
+        origin_ssl_protocols   = ["TLSv1.2"]
+      }
     }
   }
-  origin {
-    domain_name = "moka-web.dev.mogo.dev"
-    origin_id   = "mokaweb"
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
+
   default_cache_behavior {
     allowed_methods        = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods         = ["HEAD", "GET", "OPTIONS"]
