@@ -13,3 +13,12 @@ variable "origin_ids" {
   type = list(string)
   default = ["staging","mokaweb"]
 }
+
+variable "patterns" {
+  type = list(string)
+  default = ["/privacy-policy/*"]
+}
+
+variable "cert_arn" {
+  type = string
+}
