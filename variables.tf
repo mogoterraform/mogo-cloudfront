@@ -2,21 +2,20 @@ variable "bucket_name" {
   type = string
 }
 variable "domain_alias" {
-  type = string
+  type    = string
   default = "cfstg.moka.ai"
 }
 variable "origins" {
-  type = list(string)
-  default = ["staging.moka.ai","moka-web.dev.mogo.dev"]
+  type    = list(string)
+  default = ["staging.moka.ai", "moka-web.dev.mogo.dev"]
 }
 variable "origin_ids" {
-  type = list(string)
-  default = ["staging","mokaweb"]
+  type    = list(string)
+  default = ["staging", "mokaweb"]
 }
 
 variable "patterns" {
   type = list(string)
-  default = ["/privacy-policy/*"]
 }
 
 variable "cert_arn" {

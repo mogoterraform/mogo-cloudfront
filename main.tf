@@ -4,14 +4,15 @@ provider "aws" {
 
 #creating AWS CloudFront distribution :
 resource "aws_cloudfront_distribution" "main_dist" {
-  enabled             = true
-  aliases             = [var.domain_alias]
+  enabled = true
+  aliases = [var.domain_alias]
+  comment = var.domain_alias
 
   dynamic "origin" {
     for_each = var.origins
     content {
       domain_name = origin.value
-      origin_id = var.origin_ids[origin.key]
+      origin_id   = var.origin_ids[origin.key]
       custom_origin_config {
         http_port              = 80
         https_port             = 443
@@ -24,7 +25,7 @@ resource "aws_cloudfront_distribution" "main_dist" {
   default_cache_behavior {
     allowed_methods        = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
     cached_methods         = ["HEAD", "GET", "OPTIONS"]
-    target_origin_id       = var.origins[0]
+    target_origin_id       = var.origin_ids[0]
     viewer_protocol_policy = "redirect-to-https" # other options - https only, http
     forwarded_values {
       headers      = ["Origin"]
@@ -41,10 +42,10 @@ resource "aws_cloudfront_distribution" "main_dist" {
       path_pattern     = ordered_cache_behavior.value
       allowed_methods  = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
       cached_methods   = ["HEAD", "GET", "OPTIONS"]
-      target_origin_id = var.origins[1]
+      target_origin_id = var.origin_ids[1]
 
       forwarded_values {
-        query_string = false
+        query_string = true
         headers      = ["Origin"]
 
         cookies {
@@ -65,9 +66,8 @@ resource "aws_cloudfront_distribution" "main_dist" {
     }
   }
   viewer_certificate {
-    acm_certificate_arn      = var.cert_arn 
+    acm_certificate_arn      = var.cert_arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }
-  
 }
