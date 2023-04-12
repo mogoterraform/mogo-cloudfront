@@ -2,6 +2,16 @@ provider "aws" {
   region = "ca-central-1"
 }
 
+data "aws_cloudfront_cache_policy" "CachingPolicy" {
+  name = "Accept-Headers-Optimized-1hr-cache"
+}
+
+data "aws_cloudfront_origin_request_policy" "OriginRequest" {
+  name = "Accept-Headers-Optimized"
+}
+
+
+
 #creating AWS CloudFront distribution :
 resource "aws_cloudfront_distribution" "main_dist" {
   enabled = true
@@ -23,18 +33,14 @@ resource "aws_cloudfront_distribution" "main_dist" {
   }
 
   default_cache_behavior {
-    allowed_methods        = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods         = ["HEAD", "GET", "OPTIONS"]
-    target_origin_id       = var.origin_ids[0]
-    viewer_protocol_policy = "redirect-to-https" # other options - https only, http
-    forwarded_values {
-      headers      = ["Origin"]
-      query_string = true
-      cookies {
-        forward = "all"
-      }
+    allowed_methods           = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods            = ["HEAD", "GET", "OPTIONS"]
+    target_origin_id          = var.origin_ids[0]
+    viewer_protocol_policy    = "redirect-to-https" # other options - https only, http
+    cache_policy_id           = data.aws_cloudfront_cache_policy.CachingPolicy.id
+    origin_request_policy_id  = data.aws_cloudfront_origin_request_policy.OriginRequest.id
     }
-  }
+  
 
   dynamic "ordered_cache_behavior" {
     for_each = var.patterns
@@ -43,15 +49,9 @@ resource "aws_cloudfront_distribution" "main_dist" {
       allowed_methods  = ["HEAD", "GET", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
       cached_methods   = ["HEAD", "GET", "OPTIONS"]
       target_origin_id = var.origin_ids[1]
+      cache_policy_id           = data.aws_cloudfront_cache_policy.CachingPolicy.id
+      origin_request_policy_id  = data.aws_cloudfront_origin_request_policy.OriginRequest.id
 
-      forwarded_values {
-        query_string = true
-        headers      = ["Origin"]
-
-        cookies {
-          forward = "all"
-        }
-      }
 
       min_ttl                = 0
       default_ttl            = 86400
