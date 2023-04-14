@@ -21,3 +21,13 @@ variable "patterns" {
 variable "cert_arn" {
   type = string
 }
+
+variable "cachepol" {
+  type = string
+  default = "Managed-CachingDisabled"
+}
+
+variable "originpol" {
+  type = string
+  default = "Managed-AllViewer"
+}

@@ -3,11 +3,11 @@ provider "aws" {
 }
 
 data "aws_cloudfront_cache_policy" "CachingPolicy" {
-  name = "Accept-Headers-Optimized-1hr-cache"
+  name = var.cachepol
 }
 
 data "aws_cloudfront_origin_request_policy" "OriginRequest" {
-  name = "Accept-Headers-Optimized"
+  name = var.originpol
 }
 
 
