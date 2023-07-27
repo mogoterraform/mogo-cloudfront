@@ -15,8 +15,8 @@ data "aws_cloudfront_origin_request_policy" "OriginRequest" {
 #creating AWS CloudFront distribution :
 resource "aws_cloudfront_distribution" "main_dist" {
   enabled = true
-  aliases = [var.domain_alias]
-  comment = var.domain_alias
+  aliases = var.domain_alias
+#  comment = var.domain_alias
 
   dynamic "origin" {
     for_each = var.origins

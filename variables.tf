@@ -2,8 +2,8 @@ variable "bucket_name" {
   type = string
 }
 variable "domain_alias" {
-  type    = string
-  default = "cfstg.moka.ai"
+  type    = list(string)
+  default = ["cfstg.moka.ai"]
 }
 variable "origins" {
   type    = list(string)
